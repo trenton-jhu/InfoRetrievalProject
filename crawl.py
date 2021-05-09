@@ -102,6 +102,7 @@ def main():
     crawler.crawl("tt1345836", 1000, "Action")
     crawler.crawl("tt2674426", 1000, "Romance")
     crawler.crawl("tt0109686", 1000, "Comedy")
+    crawler.crawl("tt9419056", 1000, "Horror")
     crawler.output()
 
 
