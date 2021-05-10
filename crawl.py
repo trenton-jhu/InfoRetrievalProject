@@ -97,12 +97,28 @@ class MovieCrawler:
         return data, recs
 
 
+class ReviewCrawler:
+    """
+    Crawler for IMDB movie reviews
+    """
+    # TODO: Implement crawler for movie review page
+    """
+    For each links in visited.json, crawl the corresponding review page:
+    For example, for https://www.imdb.com/title/tt0468569, visit https://www.imdb.com/title/tt0468569/reviews
+    Need to extract good reviews and bad reviews separately. You can do this by filtering by the rating. We can 
+    get the 1 and 2 rating for bad reviews and 9 and 10 rating for good reviews.
+    To filter the rating, visit
+    https://www.imdb.com/title/tt0468569/reviews?spoiler=hide&sort=helpfulnessScore&dir=desc&ratingFilter=1
+    this will show only reviews with rating 1. 
+    """
+
+
+
 def main():
     crawler = MovieCrawler()
     crawler.crawl("tt1345836", 1000, "Action")
     crawler.crawl("tt2674426", 1000, "Romance")
     crawler.crawl("tt0109686", 1000, "Comedy")
-    crawler.crawl("tt9419056", 1000, "Horror")
     crawler.output()
 
 

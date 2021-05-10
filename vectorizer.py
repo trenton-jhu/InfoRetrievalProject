@@ -3,8 +3,8 @@ import numpy as np
 import pandas as pd
 from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.compose import ColumnTransformer
-from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.preprocessing import MultiLabelBinarizer
+from sklearn.feature_extraction.text import TfidfVectorizer, CountVectorizer
+from sklearn.preprocessing import MultiLabelBinarizer, normalize
 
 
 class MultiHotEncoder(BaseEstimator, TransformerMixin):
@@ -74,8 +74,23 @@ class MovieVectorizer:
             return self.trans.transform(X)
 
 
-class ReviewVectorizer:
+class MovieNGramVectorizer:
     """
-    Class for extracting text feature from movie reviews data
+    Class for extracting n-gram feature vectors from movie text data
     """
-    # TODO: Implement
+
+    def __init__(self, ngram=(1, 2), normal=True):
+        self.vectorizer = CountVectorizer(
+            tokenizer=nltk.tokenize.word_tokenize,
+            ngram_range=ngram
+        )
+        self.normal = normal
+
+    def fit_transform(self, X):
+        vec = self.vectorizer.fit_transform(X['storyline'])
+        return normalize(vec) if self.normal else vec
+
+    def transform(self, X):
+        vec = self.vectorizer.transform(X['storyline'])
+        return normalize(vec) if self.normal else vec
+

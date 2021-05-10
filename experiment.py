@@ -1,3 +1,4 @@
+import itertools
 from typing import List
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.linear_model import RidgeClassifier
@@ -86,6 +87,9 @@ class MultiLabelGenreClassifier:
         self.trained = True
 
     def predict_one(self, x) -> List[str]:
+        """
+        Given one movie as a single DataFrame, predict possible genres
+        """
         if not self.trained:
             raise Exception("Classifier needs to be trained first")
         xtest = self.vectorizer.transform(x)
@@ -104,18 +108,18 @@ class MultiLabelGenreClassifier:
         return correct, incorrect
 
 
-class ReviewClassifier:
-    """
-    Helper class for training and evaluating classifiers on movie reviews sentiment analysis
-    """
-    # TODO: Implement
-
-
-
 def main():
     df = pd.read_json("movies.json")
     df['storyline'] = df['storyline'] + df['summary']
     df = df[['storyline', 'genre']]
+
+    vectorizers = {
+        'TF': MovieVectorizer(tf_idf=False),
+        'TF-IDF': MovieVectorizer(),
+        '2-gram': MovieNGramVectorizer(ngram=(2, 2)),
+        '3-gram': MovieNGramVectorizer(ngram=(3, 3)),
+        '1,2-gram': MovieNGramVectorizer(ngram=(1, 2)),
+    }
 
     single_label_classifiers = {
         'NearestCentroid': NearestCentroid(),
@@ -128,18 +132,21 @@ def main():
     multi_label_classifiers = {
         'KNN': KNeighborsClassifier(),
         'RandomForest': RandomForestClassifier(),
-        'Neural': MLPClassifier(hidden_layer_sizes=(500, 500), max_iter=10000)
+        'Neural': MLPClassifier(hidden_layer_sizes=(500, 500), max_iter=10000),
     }
 
     print('Experiment with single label classifier:')
-    print('classifier', 'correct', 'incorrect', 'accuracy', sep='\t')
-    for name in single_label_classifiers:
-        clf = SingleLabelGenreClassifier(classifier=single_label_classifiers[name])
+    print('vectorizer', 'classifier', 'correct', 'incorrect', 'accuracy', sep='\t')
+    for vectorizer, classifier in itertools.product(*[vectorizers, single_label_classifiers]):
+        clf = SingleLabelGenreClassifier(
+            vectorizer=vectorizers[vectorizer],
+            classifier=single_label_classifiers[classifier]
+        )
         Xtrain, Xval, Ytrain, Yval = clf.prepare_data(df)
         clf.train(Xtrain, Ytrain)
         correct, incorrect = clf.evaluate(Xval, Yval)
         accuracy = correct / (correct + incorrect)
-        print(name, correct, incorrect, accuracy, sep='\t')
+        print(vectorizer, classifier, correct, incorrect, accuracy, sep='\t')
 
     print('Experiment with multi label classifier (classifier can predict more than one genres):')
     print('classifier', 'correct', 'incorrect', 'accuracy', sep='\t')
