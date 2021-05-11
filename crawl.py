@@ -111,8 +111,41 @@ class ReviewCrawler:
     https://www.imdb.com/title/tt0468569/reviews?spoiler=hide&sort=helpfulnessScore&dir=desc&ratingFilter=1
     this will show only reviews with rating 1. 
     """
+    headers = {'User-Agent': 'Mozilla/5.0'}
+    base = "https://www.imdb.com/title/"
+    def __init__(self):
+        self.result = []
 
+    def output(self, data_file="review.json"):
+        with open(data_file, 'w') as outfile:
+            json.dump(self.result, outfile, indent=2)
 
+    def crawl(self,visited = "visited.json"):
+        visitied_link = json.load(open(visited))
+        for link in visitied_link:
+            result = self.extract_info(link)
+            self.result.append(result)
+
+    def extract_info(self, link, genre="Action"):
+        data = {"good_review":[],"bad_review":[]}
+        for i in [1,2,9,10]:
+            if i < 5:
+                type = "bad_review"
+            else:
+                type = "good_review"
+            url = link+"/reviews?spoiler=hide&sort=helpfulnessScore&dir=desc&ratingFilter="+str(i)
+
+            req = request.Request(url, headers=self.headers)
+            soup = BeautifulSoup(request.urlopen(req), 'html.parser')
+            title = soup.find("title").text.replace(u'\xa0', u'').split("-")[0].strip()
+            if title not in data:
+                data["name"] = title
+            review_titles = soup.find_all("a", {"class": "title"})
+            review_contexts = soup.find_all("div", {"class": "text show-more__control"})
+            for j in range(len(review_titles)):
+                data[type].append({"title":review_titles[j].text.strip(),"Rating":i,"Context":review_contexts[j].text.strip()})
+
+        return data
 
 def main():
     crawler = MovieCrawler()
@@ -120,6 +153,10 @@ def main():
     crawler.crawl("tt2674426", 1000, "Romance")
     crawler.crawl("tt0109686", 1000, "Comedy")
     crawler.output()
+    crawler_review = ReviewCrawler()
+    crawler_review.crawl("visited.json")
+    crawler_review.output()
+
 
 
 if __name__ == '__main__':
