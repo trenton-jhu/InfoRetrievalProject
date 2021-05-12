@@ -1,5 +1,7 @@
 import json
+import random
 import argparse
+from tqdm import tqdm
 from queue import Queue
 
 from urllib import parse, request
@@ -101,62 +103,56 @@ class ReviewCrawler:
     """
     Crawler for IMDB movie reviews
     """
-    # TODO: Implement crawler for movie review page
-    """
-    For each links in visited.json, crawl the corresponding review page:
-    For example, for https://www.imdb.com/title/tt0468569, visit https://www.imdb.com/title/tt0468569/reviews
-    Need to extract good reviews and bad reviews separately. You can do this by filtering by the rating. We can 
-    get the 1 and 2 rating for bad reviews and 9 and 10 rating for good reviews.
-    To filter the rating, visit
-    https://www.imdb.com/title/tt0468569/reviews?spoiler=hide&sort=helpfulnessScore&dir=desc&ratingFilter=1
-    this will show only reviews with rating 1. 
-    """
     headers = {'User-Agent': 'Mozilla/5.0'}
     base = "https://www.imdb.com/title/"
+
     def __init__(self):
         self.result = []
+        self.count = 0
 
-    def output(self, data_file="review.json"):
+    def output(self, data_file="reviews-large.json"):
         with open(data_file, 'w') as outfile:
             json.dump(self.result, outfile, indent=2)
 
-    def crawl(self,visited = "visited.json"):
-        visitied_link = json.load(open(visited))
-        for link in visitied_link:
-            result = self.extract_info(link)
-            self.result.append(result)
+    def crawl(self, visited="visited.json", ratio=1.0):
+        visited_links = json.load(open(visited))
+        k = int(len(visited_links) * ratio)
+        for link in tqdm(random.sample(visited_links, k)):
+            try:
+                self.extract_info(link)
+            except Exception:
+                self.count += 1
+        print(self.count)
 
-    def extract_info(self, link, genre="Action"):
-        data = {"good_review":[],"bad_review":[]}
-        for i in [1,2,9,10]:
-            if i < 5:
-                type = "bad_review"
-            else:
-                type = "good_review"
-            url = link+"/reviews?spoiler=hide&sort=helpfulnessScore&dir=desc&ratingFilter="+str(i)
-
+    def extract_info(self, link):
+        for i in [1, 2, 9, 10]:
+            label = "negative" if i < 5 else "positive"
+            url = link + "/reviews?spoiler=hide&sort=helpfulnessScore&dir=desc&ratingFilter=" + str(i)
             req = request.Request(url, headers=self.headers)
             soup = BeautifulSoup(request.urlopen(req), 'html.parser')
-            title = soup.find("title").text.replace(u'\xa0', u'').split("-")[0].strip()
-            if title not in data:
-                data["name"] = title
             review_titles = soup.find_all("a", {"class": "title"})
             review_contexts = soup.find_all("div", {"class": "text show-more__control"})
             for j in range(len(review_titles)):
-                data[type].append({"title":review_titles[j].text.strip(),"Rating":i,"Context":review_contexts[j].text.strip()})
+                self.result.append({
+                    "title": review_titles[j].text.strip(),
+                    "label": label,
+                    "rating": i,
+                    "text": review_contexts[j].text.strip()
+                })
 
-        return data
 
 def main():
+    # Crawl movie data
     crawler = MovieCrawler()
     crawler.crawl("tt1345836", 1000, "Action")
     crawler.crawl("tt2674426", 1000, "Romance")
     crawler.crawl("tt0109686", 1000, "Comedy")
     crawler.output()
-    crawler_review = ReviewCrawler()
-    crawler_review.crawl("visited.json")
-    crawler_review.output()
 
+    # Crawl review data
+    crawler_review = ReviewCrawler()
+    crawler_review.crawl("visited.json", ratio=0.1)
+    crawler_review.output()
 
 
 if __name__ == '__main__':

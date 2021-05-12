@@ -1,17 +1,18 @@
 import itertools
-from typing import List
+
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.linear_model import RidgeClassifier
-from sklearn.model_selection import train_test_split
+from sklearn.linear_model import RidgeClassifier, LogisticRegression
+from sklearn.naive_bayes import BernoulliNB
 from sklearn.neighbors import NearestCentroid, KNeighborsClassifier
 from sklearn.neural_network import MLPClassifier
-from sklearn.preprocessing import LabelEncoder
 from sklearn.tree import DecisionTreeClassifier
 
-from vectorizer import *
+from helpers import *
 
 
-def to_single_label(x):
+nltk.download('stopwords')
+
+def to_single_genre(x):
     """
     Convert to a single movie genre for single-label classifier
     """
@@ -24,109 +25,33 @@ def to_single_label(x):
     raise ValueError("unrecognized genre")
 
 
-class SingleLabelGenreClassifier:
+def genre_classification(file_name="movies.json"):
     """
-    Helper class for training and evaluating single-label classifiers on movie genres
+    Run genre classification experiments based on movie data
     """
-
-    def __init__(self, vectorizer=MovieVectorizer(), classifier=NearestCentroid()):
-        self.vectorizer = vectorizer
-        self.classifier = classifier
-        self.encoder = LabelEncoder()
-        self.trained = False
-
-    def prepare_data(self, df: pd.DataFrame):
-        genre = df['genre'].apply(to_single_label)
-        y = self.encoder.fit_transform(genre)
-        return train_test_split(df.drop(columns=['genre']), y, test_size=0.2, random_state=9)
-
-    def train(self, X, Y):
-        Xtrain = self.vectorizer.fit_transform(X)
-        self.classifier.fit(Xtrain, Y)
-        self.trained = True
-
-    def predict_one(self, x) -> str:
-        """
-        Given one movie as a single DataFrame, predict its genre
-        """
-        if not self.trained:
-            raise Exception("Classifier needs to be trained first")
-        xtest = self.vectorizer.transform(x)
-        ytest = self.classifier.predict(xtest)
-        return self.encoder.inverse_transform(ytest)[0]
-
-    def evaluate(self, X, Y):
-        if not self.trained:
-            raise Exception("Classifier needs to be trained first")
-        Xval = self.vectorizer.transform(X)
-        Ypredict = self.classifier.predict(Xval)
-        correct = np.sum(Ypredict == Y)
-        incorrect = np.sum(Ypredict != Y)
-        return correct, incorrect
-
-
-class MultiLabelGenreClassifier:
-    """
-    Helper class for training and evaluating multi-label classifiers on movie genres
-    Classifier can predict multiple genres for a given movie
-    """
-
-    def __init__(self, vectorizer=MovieVectorizer(), classifier=NearestCentroid()):
-        self.vectorizer = vectorizer
-        self.classifier = classifier
-        self.encoder = MultiLabelBinarizer()
-        self.trained = False
-
-    def prepare_data(self, df: pd.DataFrame):
-        y = self.encoder.fit_transform(df['genre'])
-        return train_test_split(df.drop(columns=['genre']), y, test_size=0.2, random_state=9)
-
-    def train(self, X, Y):
-        Xtrain = self.vectorizer.fit_transform(X)
-        self.classifier.fit(Xtrain, Y)
-        self.trained = True
-
-    def predict_one(self, x) -> List[str]:
-        """
-        Given one movie as a single DataFrame, predict possible genres
-        """
-        if not self.trained:
-            raise Exception("Classifier needs to be trained first")
-        xtest = self.vectorizer.transform(x)
-        ytest = self.classifier.predict(xtest)
-        return list(self.encoder.inverse_transform(ytest)[0])
-
-    def evaluate(self, X, Y):
-        if not self.trained:
-            raise Exception("Classifier needs to be trained first")
-        Xval = self.vectorizer.transform(X)
-        Ypredict = self.classifier.predict(Xval)
-        overlap = np.count_nonzero(Ypredict + Y == 2, axis=1)
-        total = overlap.shape[0]
-        correct = np.count_nonzero(overlap > 0)
-        incorrect = total - correct
-        return correct, incorrect
-
-
-def main():
-    df = pd.read_json("movies.json")
+    df = pd.read_json(file_name)
     df['storyline'] = df['storyline'] + df['summary']
-    df = df[['storyline', 'genre']]
+    df['single_genre'] = df['genre'].apply(to_single_genre)
+    df = df[['storyline', 'genre', 'single_genre']]
+    data_col = 'storyline'
 
     vectorizers = {
-        'TF': MovieVectorizer(tf_idf=False),
-        'TF-IDF': MovieVectorizer(),
-        '2-gram': MovieNGramVectorizer(ngram=(2, 2)),
-        '3-gram': MovieNGramVectorizer(ngram=(3, 3)),
-        '1,2-gram': MovieNGramVectorizer(ngram=(1, 2)),
+        'TF': TermVectorizer(data_col, tf_idf=False),
+        'TF-IDF': TermVectorizer(data_col),
+        'TF-IDF NoStopwords': TermVectorizer(data_col, remove_stopwords=True),
+        '2-gram': NGramVectorizer(data_col, ngram=(2, 2)),
+        '3-gram': NGramVectorizer(data_col, ngram=(3, 3)),
+        '1,2-gram': NGramVectorizer(data_col, ngram=(1, 2)),
     }
 
     single_label_classifiers = {
         'NearestCentroid': NearestCentroid(),
         'KNN': KNeighborsClassifier(),
-        'DecisionTree': DecisionTreeClassifier(),
+        'DecisionTree': DecisionTreeClassifier(max_depth=20),
         'RandomForest': RandomForestClassifier(),
         'Ridge': RidgeClassifier(),
+        'Bernoulli NB': BernoulliNB(),
+        'Logistic': LogisticRegression(),
     }
 
     multi_label_classifiers = {
@@ -135,28 +60,100 @@ def main():
         'Neural': MLPClassifier(hidden_layer_sizes=(500, 500), max_iter=10000),
     }
 
-    print('Experiment with single label classifier:')
+    best_acc = 0
+    best_single_label_clf = None
+    best_vec, best_clf = "", ""
+
+    print('Experiment with single label classifier for classifying movie genre:')
     print('vectorizer', 'classifier', 'correct', 'incorrect', 'accuracy', sep='\t')
     for vectorizer, classifier in itertools.product(*[vectorizers, single_label_classifiers]):
-        clf = SingleLabelGenreClassifier(
+        clf = SingleLabelClassifier(
             vectorizer=vectorizers[vectorizer],
             classifier=single_label_classifiers[classifier]
         )
-        Xtrain, Xval, Ytrain, Yval = clf.prepare_data(df)
+        Xtrain, Xval, Ytrain, Yval = clf.prepare_data('single_genre', df)
+        clf.train(Xtrain, Ytrain)
+        correct, incorrect = clf.evaluate(Xval, Yval)
+        accuracy = correct / (correct + incorrect)
+        if accuracy > best_acc:
+            best_acc = accuracy
+            best_vec = vectorizer
+            best_clf = classifier
+            best_single_label_clf = clf
+        print(vectorizer, classifier, correct, incorrect, accuracy, sep='\t')
+    print(f"Best accuracy achieved: {best_acc} with {best_vec} and {best_clf}")
+    print(f"Saving model to file")
+    best_single_label_clf.save_clf("best_single_label_clf.pkl")
+
+    best_multi_label_clf = None
+
+    print('Experiment with multi label classifier (classifier can predict more than one genres):')
+    print('vectorizer', 'classifier', 'correct', 'incorrect', 'accuracy', sep='\t')
+    for vectorizer, classifier in itertools.product(*[vectorizers, multi_label_classifiers]):
+        clf = MultiLabelClassifier(
+            vectorizer=vectorizers[vectorizer],
+            classifier=multi_label_classifiers[classifier]
+        )
+        Xtrain, Xval, Ytrain, Yval = clf.prepare_data('genre', df)
+        clf.train(Xtrain, Ytrain)
+        correct, incorrect = clf.evaluate(Xval, Yval)
+        accuracy = correct / (correct + incorrect)
+        if accuracy > best_acc:
+            best_acc = accuracy
+            best_vec = vectorizer
+            best_clf = classifier
+            best_multi_label_clf = clf
+        print(vectorizer, classifier, correct, incorrect, accuracy, sep='\t')
+        print(f"Best accuracy achieved: {best_acc} with {best_vec} and {best_clf}")
+        print(f"Saving model to file")
+        best_multi_label_clf.save_clf("best_multi_label_clf.pkl")
+
+
+def sentiment_analysis(file_name="reviews.json"):
+    """
+    Run sentiment analysis experiments to classify movie reviews as positive or negative
+    """
+    df = pd.read_json(file_name)
+    df['text'] = df['title'] + df['text']
+    df = df[['text', 'label']]
+    data_col, label_col = 'text', 'label'
+
+    vectorizers = {
+        'TF': TermVectorizer(data_col, tf_idf=False),
+        'TF-IDF': TermVectorizer(data_col),
+        'TF-IDF NoStopwords': TermVectorizer(data_col, remove_stopwords=True),
+        '2-gram': NGramVectorizer(data_col, ngram=(2, 2)),
+        '3-gram': NGramVectorizer(data_col, ngram=(3, 3)),
+        '1,2-gram': NGramVectorizer(data_col, ngram=(1, 2)),
+    }
+
+    single_label_classifiers = {
+        'NearestCentroid': NearestCentroid(),
+        'KNN': KNeighborsClassifier(),
+        'DecisionTree': DecisionTreeClassifier(max_depth=20),
+        'RandomForest': RandomForestClassifier(),
+        'Ridge': RidgeClassifier(),
+        'Bernoulli NB': BernoulliNB(),
+        'Logistic': LogisticRegression(),
+    }
+
+    print('Experiment with sentiment analysis for movie reviews:')
+    print('vectorizer', 'classifier', 'correct', 'incorrect', 'accuracy', sep='\t')
+    for vectorizer, classifier in itertools.product(*[vectorizers, single_label_classifiers]):
+        clf = SingleLabelClassifier(
+            vectorizer=vectorizers[vectorizer],
+            classifier=single_label_classifiers[classifier]
+        )
+        Xtrain, Xval, Ytrain, Yval = clf.prepare_data(label_col, df)
         clf.train(Xtrain, Ytrain)
         correct, incorrect = clf.evaluate(Xval, Yval)
         accuracy = correct / (correct + incorrect)
         print(vectorizer, classifier, correct, incorrect, accuracy, sep='\t')
 
-    print('Experiment with multi label classifier (classifier can predict more than one genres):')
-    print('classifier', 'correct', 'incorrect', 'accuracy', sep='\t')
-    for name in multi_label_classifiers:
-        clf = MultiLabelGenreClassifier(classifier=multi_label_classifiers[name])
-        Xtrain, Xval, Ytrain, Yval = clf.prepare_data(df)
-        clf.train(Xtrain, Ytrain)
-        correct, incorrect = clf.evaluate(Xval, Yval)
-        accuracy = correct / (correct + incorrect)
-        print(name, correct, incorrect, accuracy, sep='\t')
+
+def main():
+    genre_classification()
+    sentiment_analysis()
 
 
 if __name__ == '__main__':
