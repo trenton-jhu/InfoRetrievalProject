@@ -1,6 +1,6 @@
 import itertools
 
-from sklearn.ensemble import RandomForestClassifier
+from sklearn.ensemble import RandomForestClassifier, AdaBoostClassifier
 from sklearn.linear_model import RidgeClassifier, LogisticRegression
 from sklearn.naive_bayes import BernoulliNB
 from sklearn.neighbors import NearestCentroid, KNeighborsClassifier
@@ -9,8 +9,8 @@ from sklearn.tree import DecisionTreeClassifier
 
 from helpers import *
 
-
 nltk.download('stopwords')
+
 
 def to_single_genre(x):
     """

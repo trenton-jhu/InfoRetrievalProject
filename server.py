@@ -16,6 +16,8 @@ sclf = SingleLabelClassifier()
 sclf.load_clf("best_single_label_clf.pkl")
 mclf = MultiLabelClassifier()
 mclf.load_clf("best_multi_label_clf.pkl")
+saclf = SingleLabelClassifier()
+saclf.load_clf("best_sentiment_analysis_clf.pkl")
 
 # Load movie data and term vectors
 df = pd.read_csv('term_vectors.csv')
@@ -57,6 +59,15 @@ def predict_genres():
     return jsonify({'genres': genres})
 
 
+@app.route('/sent', methods=['GET'])
+def predict_sentiment():
+    data = request.args.get("data")
+    sent = saclf.predict_one(pd.DataFrame({
+        'text': data
+    }, index=[0]))
+    return jsonify({'label': sent})
+
+
 @app.route('/init', methods=['GET'])
 def init_feedback():
     data = request.args.get("mode")
@@ -79,3 +90,4 @@ def step_feedback():
 
 if __name__ == '__main__':
     app.run()
+
