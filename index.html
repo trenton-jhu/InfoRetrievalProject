@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Info Retrieval HW 2</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+          integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+
+    <style>
+        .center {
+            text-align: center;
+        }
+
+        .btn {
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+<div class="center">
+    <div class="jumbotron jumbotron-fluid">
+        <div class="container">
+            <h1 class="display-4">Movie Data Info Retrieval</h1>
+            <p class="lead">Info Retrieval Project</p>
+            <p>Trenton Yuntian Wang | Lynn Yin</p>
+            <p>Please make sure the backend server is started at localhost port 5000 before using this web
+                application.</p>
+        </div>
+    </div>
+</div>
+<div class="container" id="main">
+    <h3>Movie Single-Genre Classifier</h3>
+    <p>Type in any movie plot summary and we will predict the movie's genre. The single-genre classifier only supports
+        Action, Romance, and Comedy genres.</p>
+    <form id="form-genre">
+        <div class="form-group">
+            <textarea
+                    class="form-control" id="textarea" rows="3"></textarea>
+        </div>
+        <button type="button" class="btn btn-success" id="submit">Classify</button>
+        <div class="alert alert-success" id="genre-result" style="display: none"></div>
+    </form>
+    <br/>
+    <hr/>
+    <h3>Movie Multi-Genre Classifier</h3>
+    <p>Type in any movie plot summary and we will predict the movie's genres. This classifier can predict many genres
+        for your plot.</p>
+    <form id="form-genres">
+        <div class="form-group">
+            <textarea class="form-control" id="textarea2" rows="3"></textarea>
+        </div>
+        <button type="button" class="btn btn-success" id="submit2">Classify</button>
+        <div class="alert alert-success" id="genres-result" style="display: none"></div>
+    </form>
+    <br/>
+    <hr/>
+    <h3>Movie Reviews Sentiment Analysis</h3>
+    <p>Construct a review for a movie and we will predict whether it is a positive or negative review.</p>
+    <form id="form-sa">
+        <div class="form-group">
+            <textarea class="form-control" id="textarea3" rows="3"></textarea>
+        </div>
+        <button type="button" class="btn btn-success" id="submit3">Classify</button>
+        <div class="alert alert-success" id="sa-result" style="display: none"></div>
+    </form>
+    <br/>
+    <hr/>
+    <h3>Movie Preference Predictor</h3>
+    <p>This is a movie preference predictor based on relevant feedback loop. We will sample a random movie and predict
+        whether you like it or not. Then, you can tell us your actual preference. After more feedback from you, our
+        predictor can be trained to make more accurate prediction about your preference.
+    </p>
+    <div style="text-align: center" id="init">
+        <button type="button" class="btn btn-primary" id="nearest-centroid">Start Predictor using Nearest Centroid
+        </button>
+        <button type="button" class="btn btn-secondary" id="knn">Start Predictor using K-Nearest Neighbors</button>
+        <br/>
+        <small>The predictor is trained using relevance feedback techniques using either nearest centroid or k-nearest
+            neighbors
+            based on tf_idf term vectors extracted from movie plot summary.
+        </small>
+    </div>
+    <div style="text-align: center; display: none" id="feedback">
+        <div class="alert alert-info" id="prediction"></div>
+        <p>Select your actual preference:</p>
+        <button type="button" class="btn btn-success" id="like">I like this movie</button>
+        <button type="button" class="btn btn-danger" id="dislike">I don't like this movie</button>
+    </div>
+    <div class="row" id="movie-card" style="display: none">
+        <div class="col col-lg-2">
+            <img class="card-img-top" id="poster"
+                 src="https://m.media-amazon.com/images/M/MV5BMTk4ODQzNDY3Ml5BMl5BanBnXkFtZTcwODA0NTM4Nw@@._V1_UX182_CR0,0,182,268_AL_.jpg"
+                 style="width:auto; height:auto" alt="Card image cap">
+        </div>
+        <div class="col">
+            <div class="card" style="width: 100%;">
+                <div class="card-body">
+                    <h5 class="card-title" id="title">Movie Title</h5>
+                    <strong>Genre: </strong>
+                    <p id="genre">Action</p><strong>Director: </strong>
+                    <p id="director">Christopher Nolan</p><strong>Cast: </strong>
+                    <p id="cast">Christian Bale</p><strong>Runtime: </strong>
+                    <p id="runtime">164 min</p>
+                    <p id="summary" class="card-text">Some quick example text to build on the card title and make up the
+                        bulk of the
+                        card's
+                        content.</p>
+                    <a id="imdb" href="#" class="btn btn-primary" target="_blank">View on IMDB</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <br/>
+    <br/>
+    <br/>
+    <br/>
+    <br/>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
+
