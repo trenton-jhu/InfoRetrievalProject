@@ -47,7 +47,7 @@ def genre_classification(file_name="movies.json"):
     single_label_classifiers = {
         'NearestCentroid': NearestCentroid(),
         'KNN': KNeighborsClassifier(),
-        'DecisionTree': DecisionTreeClassifier(max_depth=20),
+        'DecisionTree': DecisionTreeClassifier(),
         'RandomForest': RandomForestClassifier(),
         'Ridge': RidgeClassifier(),
         'Bernoulli NB': BernoulliNB(),
@@ -81,6 +81,7 @@ def genre_classification(file_name="movies.json"):
             best_clf = classifier
             best_single_label_clf = clf
         print(vectorizer, classifier, correct, incorrect, accuracy, sep='\t')
+
     print(f"Best accuracy achieved: {best_acc} with {best_vec} and {best_clf}")
     print(f"Saving model to file")
     best_single_label_clf.save_clf("best_single_label_clf.pkl")
@@ -104,9 +105,10 @@ def genre_classification(file_name="movies.json"):
             best_clf = classifier
             best_multi_label_clf = clf
         print(vectorizer, classifier, correct, incorrect, accuracy, sep='\t')
-        print(f"Best accuracy achieved: {best_acc} with {best_vec} and {best_clf}")
-        print(f"Saving model to file")
-        best_multi_label_clf.save_clf("best_multi_label_clf.pkl")
+
+    print(f"Best accuracy achieved: {best_acc} with {best_vec} and {best_clf}")
+    print(f"Saving model to file")
+    best_multi_label_clf.save_clf("best_multi_label_clf.pkl")
 
 
 def sentiment_analysis(file_name="reviews.json"):
@@ -130,12 +132,16 @@ def sentiment_analysis(file_name="reviews.json"):
     single_label_classifiers = {
         'NearestCentroid': NearestCentroid(),
         'KNN': KNeighborsClassifier(),
-        'DecisionTree': DecisionTreeClassifier(max_depth=20),
+        'DecisionTree': DecisionTreeClassifier(),
         'RandomForest': RandomForestClassifier(),
         'Ridge': RidgeClassifier(),
         'Bernoulli NB': BernoulliNB(),
         'Logistic': LogisticRegression(),
     }
+
+    best_acc = 0
+    best_sentiment_analysis_clf = None
+    best_vec, best_clf = "", ""
 
     print('Experiment with sentiment analysis for movie reviews:')
     print('vectorizer', 'classifier', 'correct', 'incorrect', 'accuracy', sep='\t')
@@ -148,7 +154,16 @@ def sentiment_analysis(file_name="reviews.json"):
         clf.train(Xtrain, Ytrain)
         correct, incorrect = clf.evaluate(Xval, Yval)
         accuracy = correct / (correct + incorrect)
+        if accuracy > best_acc:
+            best_acc = accuracy
+            best_vec = vectorizer
+            best_clf = classifier
+            best_sentiment_analysis_clf = clf
         print(vectorizer, classifier, correct, incorrect, accuracy, sep='\t')
+
+    print(f"Best accuracy achieved: {best_acc} with {best_vec} and {best_clf}")
+    print(f"Saving model to file")
+    best_sentiment_analysis_clf.save_clf("best_sentiment_analysis_clf.pkl")
 
 
 def main():

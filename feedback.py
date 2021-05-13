@@ -129,6 +129,9 @@ class NearestCentroidRelevanceFeedback:
 
 
 def test():
+    """
+    Simple test to see if relevance feedback loop can be run.
+    """
     df = pd.read_csv('term_vectors.csv')
     df = df.sample(frac=1).reset_index(drop=True)
     feedback = NearestCentroidRelevanceFeedback()
