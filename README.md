@@ -43,7 +43,8 @@ urllib3             1.26.4
 ```
 Alternatively, some experiments can be run using a Google Colab python notebook remotely which has many pre-installed
  packages available, eliminating the need to install all the dependencies. We provide a copy of the Colab notebook
-  here: https://colab.research.google.com/drive/1yJ9kQ609gHBgBvy1P7DmG-iSEWgq0cFw?usp=sharing
+  [here](https://colab.research.google.com/drive/1yJ9kQ609gHBgBvy1P7DmG-iSEWgq0cFw?usp=sharing
+ ).
  
 ## How to Run
 To run crawler for collecting raw data, run `python crawl.py` which will store the movies and reviews data collected
@@ -54,9 +55,9 @@ To run all experiments, use `python experiment.py`. We strongly suggest running 
  ) rather than running this locally because all the experiments together take considerable amount of time and compute
   resource.
   
-To run the web app for testing trained models and feedback loop, first start the server by running `python server.py
+To run the web app for testing trained models and running the movie preference predictor, first start the server by running `python server.py
 ` which will spin up a Flask server at localhost port `5000`. After the server is up, open `index.html` in a web
- browser and user the web app on the page.
+ browser and use the web app on the page.
 
 ## Crawler
 We crawed three geners of films: Action, Romance, and Comedy.
