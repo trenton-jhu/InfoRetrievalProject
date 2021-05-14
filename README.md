@@ -63,7 +63,7 @@ We crawed three geners of films: Action, Romance, and Comedy.
 
 The crawl class has three variables: movie_id, genre, and max_links. This class is used for crawling movies’ information, and we store the information in a queue: we push the url of films (e.g. https://www.imdb.com/title/tt1345836/) into the queue. Then, we iterate through the queue until the queue is empty, or until the max_link number is reached. In one iteration, we first receive one URL, use requests to request the source code, and use Beautiful Soup to understand the information. We first evaluate if “genre” matches the given one. (If not, we iterate the next url.) And then evaluate other information, including name, image, summary, director, storyline, cast, runtime, rating, count of rating, and store the information in a dictionary. In addition, we also need to understand the href in rec_item, which are the URLs to other films. We push these links to the queue for later iterations. Lastly, we store the information of the film in a list called result, and then store the URL of the current film in the list called visited, as well as in “crawled” to prevent analyzing the same film multiple times. 
 
-When the iteration is accomplished, we store the result and visited in json files: `visited.json` and `movie.json`.
+When the iteration is accomplished, we store the result and visited in json files: `visited.json` and `movies.json`.
 
 Since we initially gave 3 movie_id, and set max_links to be 1000, we received 3000 films’ information.
 
