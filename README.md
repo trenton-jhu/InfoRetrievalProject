@@ -56,7 +56,7 @@ The other piece of information that we need to craw is the movie reviews. Since 
 
 Then, we want to understand if a review is good one or not. When the corresponding rating is 0 or 1, we define it to be bad review, and when the rating is 9 or 10, we define it to be a good review. Use filters, we can get the url that contains all reviews with a rating of 1 (e.g.https://www.imdb.com/title/tt1345836//reviews?spoiler=hide&sort=helpfulnessScore&dir=desc&ratingFilter=1). Simiarily, we use requests to get the source code, Beautiful Soup to extract the information, and we can get information such as name of the file, review title, rating, and review content. And we label the review as a bad_review or a good_review.
 Lastly, we store the name, good_review and bad_review as the three keys of a film. The bad_review and good_review each contains multiple reviews. We print such information to review.json for later analysis.
-![image](https://user-images.githubusercontent.com/43009655/118210034-6528c280-b49c-11eb-958c-555d8129b6bf.png)
+
 
 
 
