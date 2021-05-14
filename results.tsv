@@ -49,6 +49,18 @@ TF-IDF NoStopwords	Logistic	464	136	0.7733333333333333
 1,2-gram	Bernoulli NB	422	178	0.7033333333333334
 1,2-gram	Logistic	431	169	0.7183333333333334
 
+Experiment with single label genre classifier using Image IR (movie poster):
+classifier	correct	incorrect	accuracy
+NearestCentroid	321	279	0.535
+KNN	272	328	0.4533333333333333
+DecisionTree	264	336	0.44
+RandomForest	338	262	0.5633333333333334
+AdaBoost	301	299	0.5016666666666667
+Ridge	272	328	0.4533333333333333
+Bernoulli NB	265	335	0.44166666666666665
+Logistic	247	353	0.4116666666666667
+
+
 Experiment with multi label classifier (classifier can predict more than one genres):
 vectorizer	classifier	correct	incorrect	accuracy
 TF	KNN	457	143	0.7616666666666667
@@ -65,6 +77,13 @@ TF-IDF NoStopwords	Neural	553	47	0.9216666666666666
 2-gram	Neural	510	90	0.85
 3-gram	KNN	457	143	0.7616666666666667
 3-gram	RandomForest	387	213	0.645
+
+Experiment with multi label genre classifier using Image IR (movie poster):
+classifier	correct	incorrect	accuracy
+KNN	396	204	0.66
+RandomForest	378	222	0.63
+Neural	414	186	0.69
+
 
 Experiment with sentiment analysis for movie reviews:
 vectorizer	classifier	correct	incorrect	accuracy

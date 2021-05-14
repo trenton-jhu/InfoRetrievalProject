@@ -81,7 +81,7 @@ class ImageVectorizer:
 
 class SingleLabelClassifier:
     """
-    Helper class for training and evaluating single-label classifiers on movie genres
+    Helper class for training and evaluating single-label classifiers
     """
 
     def __init__(self, vectorizer=None, classifier=None):
