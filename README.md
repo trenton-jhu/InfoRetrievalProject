@@ -1,6 +1,6 @@
 # Movies IR 
-
-Trenton Yuntian Wang, Lynn Sihao Yin
+### Info Retrieval Final Project - Spring 2021
+Trenton Yuntian Wang (ywang382@jhu.edu), Lynn Sihao Yin
 
 ## Overview
 In this project, we focus on movie and movie reviews data and perform different info retrieval tasks using these
@@ -8,16 +8,14 @@ In this project, we focus on movie and movie reviews data and perform different 
   analyzer for determining sentiment of movie reviews, and a movie preference predictor for predicting a user's
    preferred movies based on relevant feedback from the user.
    
-Data files are uploaded [here](https://drive.google.com/drive/folders/1iz2Wz2i9tyrManCKxWcNOQHASFtvOxy7?usp
-=sharing).
+[Google Drive](https://drive.google.com/file/d/1rxbw4aCw7DL5zufzsBqBF57RRFrp1nS0/view?usp=sharing):
 This includes raw data crawled from IMDB, term vectors data, trained models, experiment results etc. 
 
 [Project github](https://github.com/trenton-jhu/InfoRetrievalProject)
 
 [Google Colab Notebook](https://colab.research.google.com/drive/1yJ9kQ609gHBgBvy1P7DmG-iSEWgq0cFw?usp=sharing)
 
-[Video Demo](https://livejohnshopkins-my.sharepoint.com/:v:/g/personal/ywang382_jh_edu
-/EWCuGlSJsA9MkuBGzI3ANd4BFWoS_UTQvNONMSPGDSXkXg?e=NKNhsI)
+[Video Demo](https://livejohnshopkins-my.sharepoint.com/:v:/g/personal/ywang382_jh_edu/EWCuGlSJsA9MkuBGzI3ANd4BFWoS_UTQvNONMSPGDSXkXg?e=LByOlf)
 
 ## Depedencies
 This project requires many different packages ranging from data analysis, storage, ML classifiers, serialization
