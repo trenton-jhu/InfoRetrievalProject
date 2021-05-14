@@ -1,10 +1,9 @@
 import flask
-import json
 from flask import request, jsonify
 from flask_cors import CORS
 
-from helpers import *
 from feedback import *
+from helpers import *
 
 # Flask server init
 app = flask.Flask(__name__)

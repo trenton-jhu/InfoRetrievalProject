@@ -1,11 +1,10 @@
 import json
 import random
-import argparse
-from tqdm import tqdm
 from queue import Queue
+from urllib import request
 
-from urllib import parse, request
 from bs4 import BeautifulSoup
+from tqdm import tqdm
 
 
 class MovieCrawler:

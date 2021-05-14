@@ -8,14 +8,16 @@ In this project, we focus on movie and movie reviews data and perform different 
   analyzer for determining sentiment of movie reviews, and a movie preference predictor for predicting a user's
    preferred movies based on relevant feedback from the user.
    
-Data files are uploaded to here: https://drive.google.com/drive/folders/1iz2Wz2i9tyrManCKxWcNOQHASFtvOxy7?usp=sharing
+Data files are uploaded [here](https://drive.google.com/drive/folders/1iz2Wz2i9tyrManCKxWcNOQHASFtvOxy7?usp
+=sharing).
 This includes raw data crawled from IMDB, term vectors data, trained models, experiment results etc. 
 
-Project github: https://github.com/trenton-jhu/InfoRetrievalProject
+[Project github](https://github.com/trenton-jhu/InfoRetrievalProject)
 
-Google Colab Notebook: https://colab.research.google.com/drive/1yJ9kQ609gHBgBvy1P7DmG-iSEWgq0cFw?usp=sharing
+[Google Colab Notebook](https://colab.research.google.com/drive/1yJ9kQ609gHBgBvy1P7DmG-iSEWgq0cFw?usp=sharing)
 
-Video Demo: 
+[Video Demo](https://livejohnshopkins-my.sharepoint.com/:v:/g/personal/ywang382_jh_edu
+/EWCuGlSJsA9MkuBGzI3ANd4BFWoS_UTQvNONMSPGDSXkXg?e=NKNhsI)
 
 ## Depedencies
 This project requires many different packages ranging from data analysis, storage, ML classifiers, serialization
@@ -50,8 +52,8 @@ To run crawler for collecting raw data, run `python crawl.py` which will store t
  as json files.
 
 To run all experiments, use `python experiment.py`. We strongly suggest running all the experiments on the
- (Google Colab Notebook)[https://colab.research.google.com/drive/1yJ9kQ609gHBgBvy1P7DmG-iSEWgq0cFw?usp=sharing
- ] rather than running this locally because all the experiments together take considerable amount of time and compute
+ [Google Colab Notebook](https://colab.research.google.com/drive/1yJ9kQ609gHBgBvy1P7DmG-iSEWgq0cFw?usp=sharing
+ ) rather than running this locally because all the experiments together take considerable amount of time and compute
   resource.
   
 To run the web app for testing trained models and feedback loop, first start the server by running `python server.py
