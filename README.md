@@ -1,6 +1,6 @@
 # Movies IR 
 ### Info Retrieval Final Project - Spring 2021
-Trenton Yuntian Wang (ywang382@jhu.edu), Lynn Sihao Yin
+Trenton Yuntian Wang (ywang382@jhu.edu), Lynn Sihao Yin (syin14@jhu.edu)
 
 ## Overview
 In this project, we focus on movie and movie reviews data and perform different info retrieval tasks using these
