@@ -4,6 +4,7 @@ import nltk
 import pickle
 import numpy as np
 import pandas as pd
+import skimage.io as io
 from sklearn.feature_extraction.text import TfidfVectorizer, CountVectorizer
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import normalize, LabelEncoder, MultiLabelBinarizer
@@ -51,6 +52,33 @@ class NGramVectorizer:
         return normalize(vec) if self.normal else vec
 
 
+class ImageVectorizer:
+    """
+    Class for extracting feature vectors from image
+    """
+
+    def __init__(self):
+        """
+        Cache transformed image vectors for future use
+        """
+        self.Xtrain = None
+        self.Xval = None
+
+    def fit_transform(self, X):
+        if self.Xtrain is not None:
+            return self.Xtrain
+        pixels = X['image'].apply(lambda x: io.imread(x, as_gray=True).flatten())
+        self.Xtrain = np.array(pixels.values.tolist())
+        return self.Xtrain
+
+    def transform(self, X):
+        if self.Xval is not None:
+            return self.Xtrain
+        pixels = X['image'].apply(lambda x: io.imread(x, as_gray=True).flatten())
+        self.Xval = np.array(pixels.values.tolist())
+        return self.Xval
+
+
 class SingleLabelClassifier:
     """
     Helper class for training and evaluating single-label classifiers on movie genres
@@ -88,7 +116,7 @@ class SingleLabelClassifier:
 
     def predict_one(self, x) -> str:
         """
-        Given one movie as a single DataFrame, predict its genre
+        Given one data point as a single DataFrame, predict its label
         """
         if not self.trained:
             raise Exception("Classifier needs to be trained first")

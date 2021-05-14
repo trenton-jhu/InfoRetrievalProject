@@ -42,6 +42,7 @@ def genre_classification(file_name="movies.json"):
         '2-gram': NGramVectorizer(data_col, ngram=(2, 2)),
         '3-gram': NGramVectorizer(data_col, ngram=(3, 3)),
         '1,2-gram': NGramVectorizer(data_col, ngram=(1, 2)),
+        'ImageIR': ImageVectorizer(),
     }
 
     single_label_classifiers = {
@@ -49,6 +50,7 @@ def genre_classification(file_name="movies.json"):
         'KNN': KNeighborsClassifier(),
         'DecisionTree': DecisionTreeClassifier(),
         'RandomForest': RandomForestClassifier(),
+        'AdaBoost': AdaBoostClassifier(),
         'Ridge': RidgeClassifier(),
         'Bernoulli NB': BernoulliNB(),
         'Logistic': LogisticRegression(),
@@ -57,7 +59,7 @@ def genre_classification(file_name="movies.json"):
     multi_label_classifiers = {
         'KNN': KNeighborsClassifier(),
         'RandomForest': RandomForestClassifier(),
-        'Neural': MLPClassifier(hidden_layer_sizes=(500, 500), max_iter=10000),
+        'Neural': MLPClassifier(hidden_layer_sizes=(500, 500), max_iter=10000),  # neural network with 2 hidden layers
     }
 
     best_acc = 0
@@ -134,9 +136,11 @@ def sentiment_analysis(file_name="reviews.json"):
         'KNN': KNeighborsClassifier(),
         'DecisionTree': DecisionTreeClassifier(),
         'RandomForest': RandomForestClassifier(),
+        'AdaBoost': AdaBoostClassifier(),
         'Ridge': RidgeClassifier(),
         'Bernoulli NB': BernoulliNB(),
         'Logistic': LogisticRegression(),
+        'Neural': MLPClassifier(hidden_layer_sizes=(500, 500), max_iter=10000),  # neural network with 2 hidden layers
     }
 
     best_acc = 0
